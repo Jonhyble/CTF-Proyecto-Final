@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctf-frontend-mobile
+  labels:
+    app: ctf-frontend-mobile
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: ctf-frontend-mobile
+  template:
+    metadata:
+      labels:
+        app: ctf-frontend-mobile
+    spec:
+      containers:
+      - name: ctf-frontend-mobile
+        image: isaacbh/ctf-frontend-mobile
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctf-frontend-mobile-service
+  labels:
+    app: ctf-frontend-mobile-service
+spec:
+  selector:
+    app: ctf-frontend-mobile
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  sessionAffinity: None

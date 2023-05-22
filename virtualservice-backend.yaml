@@ -1,0 +1,59 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ctf-proyecto-final-service-ingress
+spec:
+  hosts: 
+  - '*'
+  gateways:
+  - ctf-proyecto-final-gateway
+  http:
+  - route:
+    - destination:
+        host: ctf-backend-proxy-service
+spec:
+  hosts: 
+  - '*'
+  gateways:
+  - ctf-proyecto-final-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/
+    rewrite:
+        uri: /
+    route:
+    - destination:
+        host: ctf-backend-proxy-service
+    timeout: 10s
+    retries:
+      attempts: 5
+      perTryTimeout: 10s
+  - match:
+    - uri:
+        prefix: /app/
+      headers:
+        User-Agent:
+          regex: ".*Mobile.*"
+    rewrite:
+        uri: "/"
+    route:
+    - destination:
+        host: ctf-frontend-mobile-service
+    timeout: 7s
+    retries:
+      attempts: 3
+      perTryTimeout: 7s     
+  - match:
+    - uri:
+        prefix: /app/
+    rewrite:
+        uri: "/"
+    route:
+    - destination:
+        host: ctf-frontend-desktop-service
+    timeout: 7s
+    retries:
+      attempts: 3
+      perTryTimeout: 7s
+        
